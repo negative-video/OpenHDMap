@@ -20,10 +20,7 @@ def convert_to_decimal_degrees(coordinate):
     return degrees + minutes
 
 # Attempt to open the serial port at defined baud rate
-try:
-    ser = serial.Serial(usb_serialport, baudrate)
-except serial.SerialException as e:
-    print("Serial port " + usb_serialport + "is not available:", e)
+ser = serial.Serial(usb_serialport, baudrate)
 
 # Open a CSV file for writing
 date_time = get_system_datetime()
@@ -33,6 +30,7 @@ with open(date_time + '.csv', 'w', newline='') as csvfile:
     writer.writeheader()
     
     while True:
+        
         # Read a line from the serial port
         line = ser.readline().decode('utf-8')
         
