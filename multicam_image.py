@@ -3,9 +3,6 @@ from pathlib import Path
 import cv2
 import depthai as dai
 import contextlib
-import math
-import signal
-import threading
 
 with contextlib.ExitStack() as stack:
     # Record from all available devices
@@ -20,6 +17,10 @@ with contextlib.ExitStack() as stack:
     for device_info in device_infos:
         openvino_version = dai.OpenVINO.Version.VERSION_2021_4
         device = stack.enter_context(dai.Device(openvino_version, device_info, usb2Mode=False))
+        mxId = device.getMxId()
+        cameras = device.getConnectedCameras()
+        usbSpeed = device.getUsbSpeed()
+        eepromData = device.readCalibration2().getEepromData()
 
 
 # Create pipeline
@@ -27,7 +28,7 @@ pipeline = dai.Pipeline()
 
 camRgb = pipeline.create(dai.node.ColorCamera)
 camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
-camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_4_K) # Max = THE_13_MP or THE_4_k or THE_5_MP
+camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_13_MP) # Max = THE_13_MP or THE_4_k or THE_5_MP
 
 xoutRgb = pipeline.create(dai.node.XLinkOut)
 xoutRgb.setStreamName("rgb")
@@ -36,6 +37,7 @@ camRgb.video.link(xoutRgb.input)
 xin = pipeline.create(dai.node.XLinkIn)
 xin.setStreamName("control")
 xin.out.link(camRgb.inputControl)
+xin.setNumFrames(2) # Frame buffer occupies all RAM at high resolution; drop from 4 to 2
 
 # Properties
 videoEnc = pipeline.create(dai.node.VideoEncoder)
@@ -65,6 +67,7 @@ with dai.Device(pipeline) as device:
         if inRgb is not None:
             frame = inRgb.getCvFrame()
             # 4k / 4
+            frame = cv2.pyrDown(frame)
             frame = cv2.pyrDown(frame)
             frame = cv2.pyrDown(frame)
             cv2.imshow("rgb", frame)
