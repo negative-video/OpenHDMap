@@ -9,7 +9,7 @@ def createPipeline():
     camRgb = pipeline.create(dai.node.ColorCamera)
     camRgb.setBoardSocket(dai.CameraBoardSocket.RGB)
     camRgb.setPreviewSize(420, 312)
-    camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_13_MP) # Max = THE_13_MP or THE_4_k or THE_5_MP
+    camRgb.setResolution(dai.ColorCameraProperties.SensorResolution.THE_1080_P) # Max = THE_13_MP or THE_4_k or THE_5_MP
 
     xoutRgb = pipeline.create(dai.node.XLinkOut)
     xoutRgb.setStreamName("rgb")
