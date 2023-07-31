@@ -30,13 +30,13 @@ The actual "HD Map" generation pipeline is not yet ready. Imagery can be manuall
 
    c. The two above images are laid on top of each other. Any "colored" pixels in `image-OAKdetect-####.jpg` are replaced with black pixels. This composite is saved as a third file, `image-OAKmasked-####.jpg` where, once again, `####` matches the other two saved images. It will look identical to the first image except where cars/trucks/pedestrians/etc are blacked out.
 
-## Planned additional steps:
-1. Provide script to mask out images not captured by OAK cameras
-2. Lens interinsics and rig extrinsics can be computed and saved somewhere to speed up processing
-3. Every X distance or X incremental captures, a photogrammetry application script will automatically import masked photos and process to generate a low/medium-quality point cloud for this section of road
-4. Using a cellular data connection to the computer, these point clouds will be copied to a remote server using a combination of Tailscale SD-WAN and Rsync 
 
-## How to test code:
+## Planned additional steps:
+1. Lens interinsics and rig extrinsics can be computed and saved somewhere to speed up processing
+2. Every X distance or X incremental captures, a photogrammetry application script will automatically import masked photos and process to generate a low/medium-quality point cloud for this section of road
+3. Using a cellular data connection to the computer, these point clouds will be copied to a remote server using a combination of Tailscale SD-WAN and Rsync 
+
+## How to test code with OAK cameras:
 * Follow Luxonis' [guide for installing DepthAI on your computer](https://docs.luxonis.com/projects/api/en/latest/install/)
 * Install Python 3.X and venv if not already done
 * [Create a virtual environment](https://www.freecodecamp.org/news/how-to-setup-virtual-environments-in-python/) and activate it
@@ -47,6 +47,13 @@ The actual "HD Map" generation pipeline is not yet ready. Imagery can be manuall
 * Assuming the camera connects and initializes, a preview window will load showing camera output (overlayed with neural net detections, if you ran `multicam-manual-capture-masking.py`). Mouse-click this preview window to ensure keyboard capture
 * Press the `c` key on your keyboard to take a photo. They will be saved to a folder matching the camera's MxId.
 * When done, press the `q` key to quit the program
+
+## What if I don't have an OAK camera?
+If you have a different camera collecting photos, such as a GoPro, the same general principle can be applied after your data has been collected.
+  1. Install `torch` and `torchvision` with PIP
+  2. Make a folder called `input_imagery` within OpenHDMap and save all photos there 
+  3. Run `no-oak-masking.py` 
+  4. Open `output_imagery` folder to view original image, AI detections, and masked output.
 
 
 ## How to recreate mapping rig

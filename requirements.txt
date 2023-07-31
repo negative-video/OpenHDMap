@@ -8,3 +8,5 @@ threading
 contextlib
 adafruit-circuitpython-gps
 geopy
+torch
+torchvision
