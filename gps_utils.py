@@ -8,7 +8,7 @@ from geopy.distance import distance as geopy_distance
 from pipeline_utils import trigger_photos
 import config
 
-def gps_thread_function(queues_dict, device_infos):
+def gps_setup():
     # Get list of serial ports
     # command = '/bin/bash -c "ls /dev/ttyUSB* /dev/ttyACM*"'
     # ports = os.popen(command).read().splitlines()
@@ -64,9 +64,6 @@ def gps_thread_function(queues_dict, device_infos):
         writer = csv.writer(file)
         writer.writerow(["Trigger Number", "UTC Time", "Latitude", "Longitude", "Altitude", "Speed (kts)", "Num Sats"])
 
-    # Initialize the trigger counter
-    trigger_counter = 0
-
     # Wait for a valid GPS fix
     while not gps.has_fix:
         gps.update()
@@ -75,13 +72,14 @@ def gps_thread_function(queues_dict, device_infos):
 
     # Wait for the user to press a key to start recording
     input("Press Enter to start recording...")
+    return gps
 
-    # GPS main loop
+def gps_distance_capture(gps, trigger_counter, capture_distance, device_infos, queues_dict):
     while not config.gps_quit_flag:
         gps.update()
         if not gps.has_fix:
-            print("No Fix")
-            time.sleep(2)
+            print("Lost GPS fix...")
+            time.sleep(1)
             continue
 
         current_coordinates = (gps.latitude, gps.longitude)

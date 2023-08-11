@@ -15,6 +15,12 @@ gps_quit_flag = False
 # Global flag to process and display next frame in preview
 process_next_frame = False
 
+# Image number
+trigger_counter = 0
+
+# Interval in meters to trigger photos
+capture_distance = 1
+
 # Create a barrier function for camera sync
 barrier = None
 def set_barrier(device_count):

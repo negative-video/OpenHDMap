@@ -4,6 +4,10 @@ import config
 
 def create_pipeline(mx_id):
     pipeline = dai.Pipeline()
+
+    # See https://docs.luxonis.com/projects/api/en/latest/tutorials/image_quality/#camera-tuning
+    pipeline.setCameraTuningBlobPath('camera_profile/tuning_exp_limit_500us.bin') 
+
     pipeline.setOpenVINOVersion(version = dai.OpenVINO.VERSION_2021_4)
 
     detection_nn = pipeline.create(dai.node.NeuralNetwork)
@@ -56,7 +60,6 @@ def trigger_photos(device_info, queues_dict):
     ctrl = dai.CameraControl()
 
     # Pull out of Auto mode
-    ctrl.setManualExposure(500, 1000)  # 500 microseconds exposure and ISO 600
     ctrl.setManualFocus(123)  # "Infinity" on OAK-D
 
     ctrl.setCaptureStill(True)
